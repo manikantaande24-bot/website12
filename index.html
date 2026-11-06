@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John &amp; Jane — Our Wedding</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script>
+        document.documentElement.classList.add('js');
+    </script>
+
+    <style>
+        /* =========================================================
+           1. RESET & DESIGN TOKENS
+           ========================================================= */
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ink: #2c3e50;
+            --ink-soft: #3c4d5e;
+            --muted: #6f6f6f;
+            --gold: #d4a373;
+            --cream: #faf7f2;
+            --hero-bg: #ffffff;
+            --line: rgba(44, 62, 80, 0.16);
+            --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--ink);
+            background: var(--cream);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .container {
+            width: min(1000px, 100%);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* =========================================================
+           INTRO SECTION
+           ========================================================= */
+
+        #intro-section {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        #intro-section.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ---------- Tap layer (no black tint, text pinned to bottom) ---------- */
+        .intro-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;                 
+            padding-bottom: clamp(40px, 10vh, 90px); 
+            background: transparent;               
+            cursor: pointer;
+            transition: opacity 0.6s ease;
+            z-index: 10;
+        }
+
+        .intro-overlay.is-playing {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* FIXED: Changed text color to dark ink with white glow for perfect visibility */
+        .tap-text {
+            color: var(--ink);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            animation: pulseTap 2s infinite;
+            text-shadow:
+                0 0 15px rgba(255, 255, 255, 0.95),
+                0 0 30px rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes pulseTap {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* =========================================================
+           2. HERO SECTION
+           ========================================================= */
+
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+            min-height: 560px;
+            overflow: hidden;
+            background: var(--hero-bg);
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            padding-top: clamp(60px, 13vh, 140px);
+            isolation: isolate;
+        }
+
+        /* ---------- Parallax container ---------- */
+
+        .parallax-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .layer {
+            position: absolute;
+            inset: 0;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+
+            pointer-events: none;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        .layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: bottom center;
+        }
+
+        /* Layer order: back to front */
+
+        .layer--bg { z-index: 1; }
+        .layer--floor { z-index: 2; }
+        .layer--bike { z-index: 3; }
+        .layer--couple { z-index: 4; }
+
+        /* =========================================================
+           DOWNFLOWERS — RESPONSIVE POSITIONING FIX
+           ========================================================= */
+
+        .layer--flowers {
+            z-index: 5;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .layer--flowers img {
+            width: auto;
+            height: 100%;
+            max-width: none;
+            max-height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            flex: 0 0 auto;
+        }
+
+        /* =========================================================
+           HERO INVITATION CARD
+           ========================================================= */
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            will-change: transform;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.55);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(44, 62, 80, 0.08);
+            padding: clamp(1.6rem, 3vw, 2.6rem) clamp(2rem, 6vw, 4.5rem);
+            animation: fadeIn 1.6s var(--ease-out) both;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.68rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+
+        .hero-card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 6vw, 3.8rem);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: 2px;
+            color: var(--ink);
+        }
+
+        .hero-card .ampersand {
+            font-style: italic;
+            font-weight: 400;
+            font-size: 0.72em;
+            color: var(--gold);
+            padding: 0 0.08em;
+        }
+
+        .hero-sub {
+            font-size: clamp(0.82rem, 1.5vw, 1.05rem);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #555;
+            margin: 14px 0 18px;
+        }
+
+        .hero-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: clamp(1.05rem, 2vw, 1.5rem);
+            letter-spacing: 6px;
+            padding: 10px 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            display: inline-block;
+            color: var(--ink-soft);
+        }
+
+        /* ---------- Hero card entrance ---------- */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-22px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================================
+           HERO PARALLAX RISE — plays once, right after the intro
+           ========================================================= */
+
+        .hero-section.hero-rise .layer img {
+            animation-name: heroRise;
+            animation-duration: var(--rise-dur, 1.4s);
+            animation-delay: var(--rise-delay, 0s);
+            animation-timing-function: var(--ease-out);
+            animation-fill-mode: backwards;
+        }
+
+        .hero-section.hero-rise .layer--bg {
+            --rise-y: 30px;
+            --rise-scale: 1.06;
+            --rise-dur: 1.7s;
+            --rise-delay: 0s;
+        }
+
+        .hero-section.hero-rise .layer--floor {
+            --rise-y: 70px;
+            --rise-scale: 1.03;
+            --rise-dur: 1.6s;
+            --rise-delay: 0.06s;
+        }
+
+        .hero-section.hero-rise .layer--bike {
+            --rise-y: 120px;
+            --rise-dur: 1.5s;
+            --rise-delay: 0.12s;
+        }
+
+        .hero-section.hero-rise .layer--couple {
+            --rise-y: 170px;
+            --rise-dur: 1.5s;
+            --rise-delay: 0.18s;
+        }
+
+        .hero-section.hero-rise .layer--flowers {
+            --rise-y: 230px;
+            --rise-dur: 1.6s;
+            --rise-delay: 0.10s;
+        }
+
+        .hero-section.hero-rise .hero-card {
+            --rise-y: 80px;
+            --rise-scale: 1;
+            animation:
+                fadeIn 1.6s var(--ease-out) both,
+                heroRise 1.4s var(--ease-out) 0.35s both;
+        }
+
+        @keyframes heroRise {
+            from {
+                transform: translate3d(0, var(--rise-y, 120px), 0) scale(var(--rise-scale, 1));
+            }
+            to {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+        }
+
+        /* =========================================================
+           SCROLL INDICATOR
+           ========================================================= */
+
+        .scroll-hint {
+            position: absolute;
+            left: 50%;
+            bottom: 26px;
+            transform: translateX(-50%);
+            z-index: 20;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.66rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+
+            will-change: opacity;
+        }
+
+        .scroll-hint-line {
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(
+                to bottom,
+                rgba(44, 62, 80, 0.5),
+                rgba(44, 62, 80, 0)
+            );
+            transform-origin: top center;
+            animation: scrollPulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% {
+                transform: scaleY(0.35);
+                opacity: 0.35;
+            }
+            50% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        /* =========================================================
+           3. PARENTS SECTION (TWO SEPARATE CARDS)
+           ========================================================= */
+
+        .parents-section {
+            position: relative;
+            z-index: 2;
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(60px, 10vh, 120px) 20px;
+            scroll-margin-top: 0;
+        }
+
+        .parents-inner {
+            width: min(1200px, 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .parents-header {
+            text-align: center;
+            margin-bottom: clamp(40px, 8vh, 80px);
+        }
+
+        .eyebrow {
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            letter-spacing: 1px;
+            color: var(--ink);
+        }
+
+        .section-rule {
+            width: 84px;
+            height: 1px;
+            background: var(--gold);
+            opacity: 0.7;
+            margin: 28px auto 0;
+        }
+
+        .parents-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(20px, 4vw, 40px);
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .parent-card {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: var(--cream);
+        }
+
+        .parent-card-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            object-fit: cover;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+        }
+
+        .parent-card-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 5% 15%;
+            box-sizing: border-box;
+        }
+
+        .parent-role {
+            font-size: 0.68rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .parent-names {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+            line-height: 1.55;
+            color: var(--ink);
+        }
+
+        .parent-names .amp {
+            font-style: italic;
+            color: var(--gold);
+            padding: 0 0.12em;
+        }
+
+        .parent-note {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--muted);
+        }
+
+        .parents-footnote {
+            margin-top: clamp(40px, 8vh, 80px);
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.9;
+            letter-spacing: 0.4px;
+            color: var(--muted);
+            max-width: 500px;
+            text-align: center;
+        }
+
+        /* =========================================================
+           4. WEDDING DATE SECTION (3D PARALLAX)
+           ========================================================= */
+
+        .date-section {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: var(--cream);
+            perspective: 1000px;
+            z-index: 2;
+            padding: 0;
+        }
+
+        .date-parallax-container {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+
+        .date-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .date-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center bottom;
+        }
+
+        .date-layer--bg { z-index: 1; }
+        .date-layer--bg img { transform: scale(1.2); }
+        .date-layer--couple { z-index: 2; align-items: flex-end; }
+
+        .date-layer--couple img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            object-position: bottom center;
+            filter: drop-shadow(0 15px 35px rgba(44, 62, 80, 0.2));
+        }
+
+        .date-content {
+            position: absolute;
+            top: clamp(40px, 10vh, 120px);
+            left: 0;
+            right: 0;
+            z-index: 10;
+            text-align: center;
+            transform-style: preserve-3d;
+            will-change: transform;
+            animation: fadeIn 1.6s var(--ease-out) both;
+            animation-delay: 0.3s;
+            
+            margin: 0 auto;
+            width: fit-content;
+            max-width: 90%;
+            background: rgba(255, 255, 255, 0.75);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            padding: clamp(20px, 4vw, 30px) clamp(20px, 6vw, 50px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(44, 62, 80, 0.15);
+        }
+
+        .date-eyebrow {
+            font-size: 0.75rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .date-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .date-day {
+            font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+        }
+
+        .date-time {
+            font-size: clamp(1rem, 1.8vw, 1.25rem);
+            color: var(--gold);
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+
+        .date-location {
+            font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+            color: var(--muted);
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================================
+           SECTION DIVIDER
+           ========================================================= */
+
+        .divider-wrapper {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        .section-divider {
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .section-divider img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* =========================================================
+           5. VENUE SECTION (3D PARALLAX)
+           ========================================================= */
+
+        .venue-section {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: var(--cream);
+            perspective: 1000px;
+            z-index: 2;
+            padding: 0;
+        }
+
+        .venue-parallax-container {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+
+        .venue-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .venue-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center bottom;
+        }
+
+        .venue-layer--sky { z-index: 1; }
+        .venue-layer--sky img { transform: scale(1.2); }
+        .venue-layer--img { z-index: 2; align-items: flex-end; }
+
+        .venue-layer--img img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            object-position: bottom center;
+            filter: drop-shadow(0 15px 35px rgba(44, 62, 80, 0.2));
+        }
+
+        .venue-layer--front { z-index: 3; align-items: flex-end; }
+
+        .venue-layer--front img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            object-position: bottom center;
+        }
+
+        .venue-content {
+            position: absolute;
+            top: clamp(80px, 15vh, 160px);
+            left: 0;
+            right: 0;
+            z-index: 10;
+            text-align: center;
+            transform-style: preserve-3d;
+            will-change: transform;
+            animation: fadeIn 1.6s var(--ease-out) both;
+            animation-delay: 0.3s;
+            
+            margin: 0 auto;
+            width: fit-content;
+            max-width: 90%;
+            background: rgba(255, 255, 255, 0.75);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            padding: clamp(20px, 4vw, 30px) clamp(20px, 6vw, 50px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(44, 62, 80, 0.15);
+        }
+
+        .venue-eyebrow {
+            font-size: 0.75rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .venue-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-family: 'Lato', sans-serif;
+            margin-bottom: 28px; 
+        }
+
+        .venue-name {
+            font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+        }
+
+        .venue-address {
+            font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+            color: var(--muted);
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        /* --- Reusable Button Styles --- */
+        .venue-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--gold);
+            border-radius: 30px;
+            color: var(--gold);
+            font-family: 'Lato', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+        }
+
+        .venue-btn:hover {
+            background: var(--gold);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(212, 163, 115, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* =========================================================
+           6. NEW SECTIONS (Calendar, Carousel, RSVP, Countdown)
+           ========================================================= */
+
+        /* --- Common Section Layout --- */
+        .new-section {
+            padding: clamp(80px, 12vh, 120px) 20px;
+            background: var(--cream);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* =========================================================
+           ADD TO CALENDAR — FIXED BACKGROUND FITTING
+           ========================================================= */
+
+        .calendar-section {
+            position: relative;
+            z-index: 2;
+            background: var(--cream);
+            text-align: center;
+
+            padding: 80px 20px;
+            min-height: 360px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-card {
+            position: absolute;
+            width: min(650px, 100%);
+            aspect-ratio: 500 / 510;
+            background-image: url('Assets/calenderbg.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14% 11% 9%;
+            box-sizing: border-box;
+        }
+
+        /* Fallback for browsers without aspect-ratio support */
+        @supports not (aspect-ratio: 1 / 1) {
+            .calendar-card {
+                height: auto;
+                min-height: 510px;
+            }
+        }
+
+        .calendar-card .container {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .calendar-card .eyebrow {
+            font-size: clamp(0.55rem, 1.8vw, 0.7rem);
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .calendar-card .section-title {
+            font-size: clamp(1.4rem, 6vw, 2.6rem);
+            line-height: 1.15;
+        }
+
+        .calendar-card .section-rule {
+            margin: 18px auto 0;
+        }
+
+        .calendar-text {
+            margin: 16px 0 26px;
+            font-size: clamp(0.82rem, 2.4vw, 1.02rem);
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .calendar-card .venue-btn {
+            padding: 10px 24px;
+            font-size: clamp(0.62rem, 1.9vw, 0.8rem);
+            letter-spacing: 1.5px;
+        }
+
+        /* --- Carousel --- */
+        .carousel-section {
+            text-align: center;
+            background: var(--hero-bg);
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto 0;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(44, 62, 80, 0.15);
+            border: 4px solid #fff;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            flex-shrink: 0;
+            object-fit: cover;
+            aspect-ratio: 4/5;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-btn:hover {
+            background: var(--gold);
+            color: #fff;
+            border-color: var(--gold);
+        }
+
+        .carousel-btn.prev { left: 15px; }
+        .carousel-btn.next { right: 15px; }
+
+        /* --- RSVP --- */
+        .rsvp-section {
+            background: var(--cream);
+        }
+
+        .rsvp-card {
+            position: relative;
+            overflow: hidden;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.7);
+            padding: clamp(40px, 6vw, 60px);
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(44, 62, 80, 0.08);
+            border: 1px solid rgba(212, 163, 115, 0.3);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+        }
+
+        /* --- NEW: RSVP Floral Decorations --- */
+        .rsvp-floral {
+            position: absolute;
+            width: clamp(140px, 40%, 220px);
+            height: auto;
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: multiply;
+            opacity: 0.95;
+        }
+
+        .rsvp-floral--tl {
+            top: -10px;
+            left: -10px;
+        }
+
+        .rsvp-floral--br {
+            bottom: -10px;
+            right: -10px;
+            transform: rotate(180deg);
+        }
+
+        .rsvp-content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 8px;
+        }
+
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--cream);
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23d4a373%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px top 50%;
+            background-size: 12px auto;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* --- Countdown --- */
+        .countdown-section {
+            background: var(--ink);
+            color: var(--cream);
+            text-align: center;
+        }
+
+        .countdown-section .section-title {
+            color: var(--gold);
+        }
+
+        .countdown-section .eyebrow {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .countdown-timer {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            justify-content: center;
+            gap: clamp(15px, 4vw, 30px);
+            margin-top: 50px;
+        }
+
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 163, 115, 0.4);
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .time-box span:first-child {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            line-height: 1;
+        }
+
+        .time-box .label {
+            font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-top: 5px;
+        }
+
+        /* --- Footer --- */
+        .wedding-footer {
+            padding: 60px 20px;
+            background: #1a252f;
+            color: var(--cream);
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .wedding-footer h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .wedding-footer p {
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .footer-hashtag {
+            font-style: italic;
+            color: var(--gold);
+            opacity: 0.8;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        /* =========================================================
+           SCROLL REVEAL
+           ========================================================= */
+
+        .js .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition:
+                opacity 0.9s var(--ease-out),
+                transform 0.9s var(--ease-out);
+        }
+
+        .js .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           MUSIC TOGGLE BUTTON
+           ========================================================= */
+        .music-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 99;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease, opacity 0.5s ease, visibility 0.5s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .music-toggle.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .music-toggle:hover {
+            background: var(--gold);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 163, 115, 0.4);
+        }
+
+        .music-toggle svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+        }
+
+        .music-toggle .icon-muted { display: none; }
+        .music-toggle.is-muted .icon-playing { display: none; }
+        .music-toggle.is-muted .icon-muted { display: block; }
+
+        /* =========================================================
+           7. RESPONSIVE STYLES
+           ========================================================= */
+
+        @media (max-width: 820px) {
+            .parents-grid {
+                grid-template-columns: 1fr; 
+                gap: 30px;
+            }
+
+            .date-content { top: 5vh; }
+            .venue-content { top: 10vh; }
+        }
+
+        @media (max-width: 520px) {
+            .hero-section {
+                padding-top: clamp(35px, 8vh, 50px);
+            }
+            
+            .hero-card {
+                width: calc(100vw - 30px);
+                padding: 1rem 1rem;
+                border-radius: 16px;
+            }
+
+            .hero-eyebrow {
+                font-size: 0.55rem;
+                margin-bottom: 8px;
+            }
+
+            .hero-card h1 {
+                font-size: 1.8rem;
+                line-height: 1.2;
+            }
+
+            .hero-sub { 
+                font-size: 0.65rem;
+                letter-spacing: 2px; 
+                margin: 8px 0 10px;
+            }
+            
+            .hero-card h2 { 
+                font-size: 0.9rem;
+                padding: 6px 0;
+                letter-spacing: 3px; 
+            }
+
+            .scroll-hint-line { height: 36px; }
+            
+            .parent-card-content {
+                padding: 8% 10%;
+            }
+            .parent-role {
+                font-size: 0.6rem;
+                margin-bottom: 8px;
+            }
+            .parent-names {
+                font-size: 1.1rem;
+                line-height: 1.4;
+            }
+
+            .calendar-section {
+                padding: 40px 14px;
+            }
+
+            .calendar-card {
+                padding: 15% 12% 10%;
+            }
+
+            .rsvp-floral {
+                width: 120px;
+            }
+            .rsvp-floral--tl {
+                top: -5px;
+                left: -5px;
+            }
+            .rsvp-floral--br {
+                bottom: -5px;
+                right: -5px;
+            }
+
+            .intro-overlay {
+                padding-bottom: clamp(32px, 8vh, 60px);
+            }
+
+            .music-toggle {
+                bottom: 15px;
+                right: 15px;
+                width: 44px;
+                height: 44px;
+            }
+            .music-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* =========================================================
+           8. REDUCED MOTION
+           ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+
+            .hero-card,
+            .scroll-hint-line,
+            .tap-text {
+                animation: none !important;
+            }
+
+            .js .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            .layer,
+            .hero-content,
+            .date-layer,
+            .date-content,
+            .venue-layer,
+            .venue-content {
+                transform: none !important;
+            }
+
+            .hero-section.hero-rise .layer img,
+            .hero-section.hero-rise .hero-card {
+                animation: none !important;
+            }
+        }
+
+        /* REMOVE BLUE TAP HIGHLIGHT ACROSS THE ENTIRE WEBSITE */
+        *,
+        *::before,
+        *::after {
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* Remove default blue focus outlines */
+        a,
+        button,
+        input,
+        select,
+        textarea,
+        [role="button"],
+        [tabindex] {
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* Keep a subtle gold indicator for keyboard navigation */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible,
+        [role="button"]:focus-visible,
+        [tabindex]:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Music -->
+    <audio id="bg-music" src="audio/music1.mpeg" loop></audio>
+
+    <!-- Music Toggle Button -->
+    <button id="music-toggle" class="music-toggle" aria-label="Toggle background music">
+        <!-- Speaker ON Icon -->
+        <svg class="icon-playing" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <!-- Speaker OFF Icon -->
+        <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+    </button>
+
+    <!-- =========================================================
+         INTRO SECTION
+         ========================================================= -->
+
+    <div id="intro-section">
+        <video id="intro-video" playsinline preload="auto">
+            <source src="Assets/introvd.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="intro-overlay" class="intro-overlay">
+            <span class="tap-text">Tap to Open</span>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         HERO SECTION
+         ========================================================= -->
+
+    <section class="hero-section" id="home">
+        <div class="parallax-container" id="parallax">
+            <div class="layer layer--bg" data-depth="0.60">
+                <img src="Assets/herobg.png" alt="" aria-hidden="true">
+            </div>
+            <div class="layer layer--floor" data-depth="0.45">
+                <img src="Assets/floor.png" alt="" aria-hidden="true">
+            </div>
+            <div class="layer layer--bike" data-depth="0.32">
+                <img src="Assets/sidebike.png" alt="" aria-hidden="true">
+            </div>
+            <div class="layer layer--couple" data-depth="0.20">
+                <img src="Assets/couplehero.png" alt="" aria-hidden="true">
+            </div>
+            <div class="layer layer--flowers" data-depth="0.10">
+                <img src="Assets/downflowers.png" alt="" aria-hidden="true">
+            </div>
+        </div>
+
+        <div class="hero-content" id="heroContent">
+            <div class="hero-card">
+                <p class="hero-eyebrow">Together with our families</p>
+                <h1>John <span class="ampersand">&amp;</span> Jane</h1>
+                <p class="hero-sub">Are Getting Married</p>
+                <h2>12 . 12 . 2027</h2>
+            </div>
+        </div>
+
+        <a class="scroll-hint" href="#parents" id="scrollHint" aria-label="Scroll down to see our parents">
+            <span>Scroll</span>
+            <span class="scroll-hint-line"></span>
+        </a>
+    </section>
+
+    <!-- =========================================================
+         PARENTS SECTION
+         ========================================================= -->
+
+    <section class="parents-section" id="parents">
+        <div class="parents-inner">
+            
+            <div class="parents-header reveal">
+                <p class="eyebrow">With Love &amp; Blessings</p>
+                <h2 class="section-title">Our Parents</h2>
+                <div class="section-rule"></div>
+            </div>
+
+            <div class="parents-grid">
+                
+                <!-- Groom's Parents Card -->
+                <article class="parent-card reveal">
+                    <img src="Assets/card.png" alt="" class="parent-card-bg" aria-hidden="true">
+                    <div class="parent-card-content">
+                        <p class="parent-role">Parents of the Groom</p>
+                        <h3 class="parent-names">Robert <br><span class="amp">&amp;</span><br> Linda Smith</h3>
+                    </div>
+                </article>
+
+                <!-- Bride's Parents Card -->
+                <article class="parent-card reveal">
+                    <img src="Assets/card.png" alt="" class="parent-card-bg" aria-hidden="true">
+                    <div class="parent-card-content">
+                        <p class="parent-role">Parents of the Bride</p>
+                        <h3 class="parent-names">Michael <br><span class="amp">&amp;</span><br> Susan Doe</h3>
+                    </div>
+                </article>
+
+            </div>
+
+            <p class="parents-footnote reveal">
+                With grateful hearts and the blessings of our families,
+                we invite you to celebrate the beginning of our<br>
+                forever.
+            </p>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         WEDDING DATE SECTION
+         ========================================================= -->
+
+    <section class="date-section" id="date">
+        <div class="date-parallax-container">
+            <div class="date-layer date-layer--bg">
+                <img src="Assets/weddingbg.png" alt="Wedding Background" aria-hidden="true">
+            </div>
+            <div class="date-layer date-layer--couple">
+                <img src="Assets/weddingcouple.png" alt="Wedding Couple" aria-hidden="true">
+            </div>
+        </div>
+
+        <div class="date-content">
+            <p class="date-eyebrow">Save the Date</p>
+            <div class="date-details">
+                <p class="date-day">Saturday, December 12, 2027</p>
+                <p class="date-time">At 4:00 PM</p>
+                <p class="date-location">The Grand Estate</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION DIVIDER
+         ========================================================= -->
+
+    <div class="divider-wrapper">
+        <div class="section-divider">
+            <img src="Assets/sectiondivider.png" alt="Decorative Floral Divider" aria-hidden="true">
+        </div>
+    </div>
+
+    <!-- =========================================================
+         VENUE SECTION
+         ========================================================= -->
+
+    <section class="venue-section" id="venue">
+        <div class="venue-parallax-container">
+            <div class="venue-layer venue-layer--sky">
+                <img src="Assets/venuesky.png" alt="Venue Sky" aria-hidden="true">
+            </div>
+            <div class="venue-layer venue-layer--img">
+                <img src="Assets/venueimg.png" alt="The Venue" aria-hidden="true">
+            </div>
+            <div class="venue-layer venue-layer--front">
+                <img src="Assets/venuefront.png" alt="Venue Foreground" aria-hidden="true">
+            </div>
+        </div>
+
+        <div class="venue-content">
+            <p class="venue-eyebrow">The Venue</p>
+            <div class="venue-details">
+                <p class="venue-name">The Grand Estate</p>
+                <p class="venue-address">123 Wedding Lane, Romantic City</p>
+            </div>
+            <a href="https://maps.google.com/?q=The+Grand+Estate" target="_blank" rel="noopener noreferrer" class="venue-btn">Get Directions</a>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         ADD TO CALENDAR SECTION
+         ========================================================= -->
+    <section class="new-section calendar-section" id="calendar">
+        <div class="calendar-card">
+            <div class="container">
+                <p class="eyebrow reveal">Don't Miss It</p>
+                <h2 class="section-title reveal">Save the Date</h2>
+                <div class="section-rule reveal"></div>
+                <p class="calendar-text reveal">We would love for you to join us on our special day.</p>
+                <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=John+%26+Jane%27s+Wedding&dates=20241212T160000/20241212T230000&details=Join+us+for+our+wedding+celebration!&location=The+Grand+Estate" target="_blank" rel="noopener noreferrer" class="venue-btn reveal">Add to Calendar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         CAROUSEL SECTION
+         ========================================================= -->
+    <section class="new-section carousel-section" id="gallery">
+        <div class="container">
+            <p class="eyebrow reveal">Our Moments</p>
+            <h2 class="section-title reveal">Gallery</h2>
+            <div class="section-rule reveal"></div>
+            
+            <div class="carousel-container reveal">
+                <div class="carousel-track" id="carousel-track">
+                    <img src="Assets/beachgallery.png" alt="Moment 1">
+                    <img src="Assets/boatgallery.png" alt="Moment 2">
+                    <img src="Assets/maldivegallery.png" alt="Moment 3">
+                    <img src="Assets/parisgallery.png" alt="Moment 4">
+                </div>
+                <button class="carousel-btn prev" id="prevBtn" aria-label="Previous slide">&#10094;</button>
+                <button class="carousel-btn next" id="nextBtn" aria-label="Next slide">&#10095;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         RSVP SECTION
+         ========================================================= -->
+    <section class="new-section rsvp-section" id="rsvp">
+        <div class="container">
+            <div class="rsvp-card reveal">
+                
+                <img src="Assets/rsvpfloral.png" alt="" class="rsvp-floral rsvp-floral--tl" aria-hidden="true">
+                <img src="Assets/rsvpfloral.png" alt="" class="rsvp-floral rsvp-floral--br" aria-hidden="true">
+                
+                <div class="rsvp-content-wrapper">
+                    <p class="eyebrow text-center">Will You Join Us?</p>
+                    <h2 class="section-title text-center">RSVP</h2>
+                    <div class="section-rule text-center" style="margin-bottom: 40px;"></div>
+                    
+                    <form id="rsvp-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="attendance">Will you attend?</label>
+                            <select id="attendance" required>
+                                <option value="" disabled selected>Please select...</option>
+                                <option value="yes">Joyfully Accept</option>
+                                <option value="no">Regretfully Decline</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Special Requests / Message</label>
+                            <textarea id="message" placeholder="Any dietary restrictions or notes..."></textarea>
+                        </div>
+                        <button type="submit" class="venue-btn" style="width: 100%; margin-top: 10px;">Send RSVP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         COUNTDOWN SECTION
+         ========================================================= -->
+    <section class="new-section countdown-section" id="countdown">
+        <div class="container">
+            <p class="eyebrow reveal">Counting Down</p>
+            <h2 class="section-title reveal" style="color: var(--gold);">To Our Forever</h2>
+            <div class="section-rule reveal" style="background: var(--gold);"></div>
+            
+            <div class="countdown-timer reveal" id="countdown-timer">
+                <div class="time-box">
+                    <span id="days">00</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="time-box">
+                    <span id="hours">00</span>
+                    <span class="label">Hours</span>
+                </div>
+                <div class="time-box">
+                    <span id="minutes">00</span>
+                    <span class="label">Minutes</span>
+                </div>
+                <div class="time-box">
+                    <span id="seconds">00</span>
+                    <span class="label">Seconds</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+    <footer class="wedding-footer">
+        <div class="container">
+            <h2>John &amp; Jane</h2>
+            <p>12 . 12 . 2027</p>
+            <p class="footer-hashtag">#JohnAndJane2027</p>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+         PARALLAX & REVEAL & NEW LOGIC SCRIPTS
+         ========================================================= -->
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* =========================================================
+           INTRO SECTION & MUSIC LOGIC
+           ========================================================= */
+        const introSection = document.getElementById('intro-section');
+        const introVideo = document.getElementById('intro-video');
+        const introOverlay = document.getElementById('intro-overlay');
+        
+        // Music Elements
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggle = document.getElementById('music-toggle');
+
+        if (introSection && introVideo && introOverlay) {
+            document.body.classList.add('no-scroll');
+
+            let introClosed = false;
+
+            function closeIntro() {
+                if (introClosed) return;
+                introClosed = true;
+
+                introSection.classList.add('is-hidden');
+                document.body.classList.remove('no-scroll');
+
+                playHeroRise();
+
+                // --- START MUSIC LOGIC ---
+                if (bgMusic) {
+                    bgMusic.volume = 0.6; // Set volume to 60%
+                    const playPromise = bgMusic.play();
+                    
+                    // Show the music button
+                    if (musicToggle) musicToggle.classList.add('show');
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // Autoplay started successfully
+                            if (musicToggle) musicToggle.classList.remove('is-muted');
+                        }).catch(error => {
+                            // Autoplay was prevented.
+                            console.log("Audio autoplay prevented:", error);
+                            if (musicToggle) musicToggle.classList.add('is-muted');
+                        });
+                    }
+                }
+                // -------------------------
+
+                setTimeout(function () {
+                    introSection.style.display = 'none';
+                }, 1200);
+            }
+
+            introOverlay.addEventListener('click', function () {
+                introOverlay.classList.add('is-playing');
+
+                const playPromise = introVideo.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch(function (error) {
+                        console.log("Playback prevented:", error);
+                    });
+                }
+            });
+
+            introVideo.addEventListener('ended', closeIntro);
+            introVideo.addEventListener('error', closeIntro);
+        }
+
+        // Music Toggle Button Logic
+        if (bgMusic && musicToggle) {
+            musicToggle.addEventListener('click', function() {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    musicToggle.classList.remove('is-muted');
+                } else {
+                    bgMusic.pause();
+                    musicToggle.classList.add('is-muted');
+                }
+            });
+        }
+
+        /* ---------- Setup ---------- */
+        const hero = document.querySelector('.hero-section');
+        const heroContent = document.getElementById('heroContent');
+        const scrollHint = document.getElementById('scrollHint');
+
+        const dateSection = document.querySelector('.date-section');
+        const dateBgLayer = document.querySelector('.date-layer--bg');
+        const dateCoupleLayer = document.querySelector('.date-layer--couple');
+        const dateContent = document.querySelector('.date-content');
+
+        const venueSection = document.querySelector('.venue-section');
+        const venueSkyLayer = document.querySelector('.venue-layer--sky');
+        const venueImgLayer = document.querySelector('.venue-layer--img');
+        const venueFrontLayer = document.querySelector('.venue-layer--front');
+        const venueContent = document.querySelector('.venue-content');
+
+        const layerEls = Array.from(document.querySelectorAll('.layer'));
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const layers = layerEls.map(function (el) {
+            return {
+                el: el,
+                depth: parseFloat(el.dataset.depth) || 0
+            };
+        });
+
+        /* =========================================================
+           HERO PARALLAX RISE
+           ========================================================= */
+        let heroRiseDone = false;
+
+        function playHeroRise() {
+            if (heroRiseDone || reduceMotion || !hero) return;
+
+            heroRiseDone = true;
+            hero.classList.add('hero-rise');
+
+            window.setTimeout(function () {
+                hero.classList.remove('hero-rise');
+            }, 3000);
+        }
+
+        /* ---------- Parallax settings ---------- */
+        const SCROLL_FACTOR = 0.24;
+        const CONTENT_DEPTH = 0.14;
+        const EASE = 0.12;
+
+        /* ---------- Scroll state ---------- */
+        let targetY = window.scrollY || window.pageYOffset || 0;
+        let currentY = targetY;
+        let heroHeight = hero.offsetHeight;
+
+        function readScroll() {
+            targetY = window.scrollY || window.pageYOffset || 0;
+        }
+
+        window.addEventListener('scroll', readScroll, { passive: true });
+
+        window.addEventListener('resize', function () {
+            heroHeight = hero.offsetHeight;
+            readScroll();
+        });
+
+        /* =========================================================
+           PARALLAX RENDER LOOP
+           ========================================================= */
+
+        function tick() {
+            currentY += (targetY - currentY) * EASE;
+
+            if (Math.abs(targetY - currentY) < 0.1) {
+                currentY = targetY;
+            }
+
+            const y = currentY < 0 ? 0 : currentY > heroHeight ? heroHeight : currentY;
+
+            /* Hero Parallax */
+            for (let i = 0; i < layers.length; i++) {
+                const layer = layers[i];
+                const offset = y * layer.depth * SCROLL_FACTOR;
+                layer.el.style.transform = 'translate3d(0, ' + offset.toFixed(2) + 'px, 0)';
+            }
+
+            if (heroContent) {
+                const contentOffset = y * CONTENT_DEPTH * SCROLL_FACTOR;
+                heroContent.style.transform = 'translate3d(0, ' + contentOffset.toFixed(2) + 'px, 0)';
+            }
+
+            if (scrollHint) {
+                const fade = Math.min(1, y / (heroHeight * 0.22));
+                scrollHint.style.opacity = String(1 - fade);
+            }
+
+            /* Date Parallax */
+            if (dateSection && dateBgLayer && dateCoupleLayer && dateContent) {
+                const dateTop = dateSection.offsetTop;
+                const dateHeight = dateSection.offsetHeight;
+                const viewH = window.innerHeight;
+                
+                if (currentY + viewH > dateTop && currentY < dateTop + dateHeight) {
+                    const scrollRelative = currentY - dateTop;
+                    const progress = (scrollRelative + viewH) / (viewH + dateHeight);
+                    const clampedProgress = Math.max(0, Math.min(1, progress));
+                    const p = (clampedProgress - 0.5) * 2;
+                    
+                    dateBgLayer.style.transform = `translate3d(0, ${p * 20}px, ${p * 50}px)`;
+                    dateCoupleLayer.style.transform = `translate3d(0, ${p * 80}px, ${p * 150}px)`;
+                    dateContent.style.transform = `translate3d(0, ${p * 120}px, ${p * 250}px)`;
+                }
+            }
+
+            /* Venue Parallax */
+            if (venueSection && venueSkyLayer && venueImgLayer && venueFrontLayer && venueContent) {
+                const venueTop = venueSection.offsetTop;
+                const venueHeight = venueSection.offsetHeight;
+                const viewH = window.innerHeight;
+                
+                if (currentY + viewH > venueTop && currentY < venueTop + venueHeight) {
+                    const scrollRelative = currentY - venueTop;
+                    const progress = (scrollRelative + viewH) / (viewH + venueHeight);
+                    const clampedProgress = Math.max(0, Math.min(1, progress));
+                    const p = (clampedProgress - 0.5) * 2;
+                    
+                    venueSkyLayer.style.transform = `translate3d(0, ${p * 20}px, ${p * 50}px)`;
+                    venueImgLayer.style.transform = `translate3d(0, ${p * 60}px, ${p * 120}px)`;
+                    venueFrontLayer.style.transform = `translate3d(0, ${p * 100}px, ${p * 200}px)`;
+                    venueContent.style.transform = `translate3d(0, ${p * 150}px, ${p * 300}px)`;
+                }
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        if (!reduceMotion) {
+            requestAnimationFrame(tick);
+        }
+
+        /* =========================================================
+           SCROLL REVEAL
+           ========================================================= */
+        const revealEls = document.querySelectorAll('.reveal');
+
+        if (!reduceMotion && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(
+                function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },
+                { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+            );
+
+            revealEls.forEach(function (el, index) {
+                el.style.transitionDelay = (index % 5 * 90) + 'ms';
+                observer.observe(el);
+            });
+
+        } else {
+            revealEls.forEach(function (el) {
+                el.classList.add('is-visible');
+            });
+        }
+
+        /* =========================================================
+           CAROUSEL LOGIC
+           ========================================================= */
+        const track = document.getElementById('carousel-track');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        if (track && prevBtn && nextBtn) {
+            let currentIndex = 0;
+            const slides = track.querySelectorAll('img').length;
+
+            function updateCarousel() {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % slides;
+                updateCarousel();
+            });
+
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + slides) % slides;
+                updateCarousel();
+            });
+        }
+
+        /* =========================================================
+           COUNTDOWN LOGIC
+           ========================================================= */
+        const countdownTarget = new Date("Dec 12, 2027 16:00:00").getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countdownTarget - now;
+
+            if (distance < 0) {
+                const timerEl = document.getElementById('countdown-timer');
+                if(timerEl) timerEl.innerHTML = "<h3 style='color:#fff; font-size: 1.5rem; letter-spacing: 2px;'>We Are Married!</h3>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const elDays = document.getElementById("days");
+            const elHours = document.getElementById("hours");
+            const elMinutes = document.getElementById("minutes");
+            const elSeconds = document.getElementById("seconds");
+
+            if(elDays) elDays.innerText = days < 10 ? "0" + days : days;
+            if(elHours) elHours.innerText = hours < 10 ? "0" + hours : hours;
+            if(elMinutes) elMinutes.innerText = minutes < 10 ? "0" + minutes : minutes;
+            if(elSeconds) elSeconds.innerText = seconds < 10 ? "0" + seconds : seconds;
+        }
+
+        if(document.getElementById('countdown-timer')) {
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        /* =========================================================
+           RSVP FORM LOGIC
+           ========================================================= */
+        const rsvpForm = document.getElementById('rsvp-form');
+        if(rsvpForm) {
+            rsvpForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = this.querySelector('button[type="submit"]');
+                const originalText = btn.innerText;
+                
+                btn.innerText = 'Sending...';
+                btn.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    btn.innerText = 'Thank You!';
+                    btn.style.background = 'var(--gold)';
+                    btn.style.color = '#fff';
+                    
+                    setTimeout(() => {
+                        rsvpForm.reset();
+                        btn.innerText = originalText;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        btn.style.opacity = '';
+                    }, 3000);
+                }, 1000);
+            });
+        }
+
+    })();
+    </script>
+
+</body>
+</html>
